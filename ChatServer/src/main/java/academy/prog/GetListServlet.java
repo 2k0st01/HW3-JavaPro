@@ -3,6 +3,8 @@ package academy.prog;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import jakarta.servlet.http.*;
 
 /*
@@ -34,15 +36,13 @@ public class GetListServlet extends HttpServlet {
 		}
 
 		resp.setContentType("application/json");
-		
 		String json = msgList.toJSON(from);
+
 		if (json != null) {
 			OutputStream os = resp.getOutputStream();
             byte[] buf = json.getBytes(StandardCharsets.UTF_8);
 			os.write(buf);
-
-			//PrintWriter pw = resp.getWriter();
-			//pw.print(json);
 		}
+
 	}
 }

@@ -1,11 +1,13 @@
 package academy.prog;
 
+import com.google.gson.Gson;
 import jakarta.servlet.http.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /*
     POST(json) -> /add -> AddServlet -> MessageList
@@ -15,21 +17,21 @@ import java.nio.charset.StandardCharsets;
 
 public class AddServlet extends HttpServlet {
 
-	private MessageList msgList = MessageList.getInstance();
+    private MessageList msgList = MessageList.getInstance();
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		byte[] buf = requestBodyToArray(req); // json
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        byte[] buf = requestBodyToArray(req);
         String bufStr = new String(buf, StandardCharsets.UTF_8);
+        Message msg = Message.fromJSON(bufStr);
 
-		Message msg = Message.fromJSON(bufStr);
-		if (msg != null)
-			msgList.add(msg);
-		else
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-	}
+        if (msg != null) {
+            msgList.add(msg);
+        } else
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
+    }
 
-	private byte[] requestBodyToArray(HttpServletRequest req) throws IOException {
+    private byte[] requestBodyToArray(HttpServletRequest req) throws IOException {
         InputStream is = req.getInputStream();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] buf = new byte[10240];

@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 public class GetThread implements Runnable {
     private final Gson gson;
     private int n; // /get?from=n
+    private static String login;
 
     public GetThread() {
         gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -21,7 +22,8 @@ public class GetThread implements Runnable {
     @Override
     public void run() { // WebSockets
         try {
-            while ( ! Thread.interrupted()) {
+
+            while (!Thread.interrupted()) {
                 URL url = new URL(Utils.getURL() + "/get?from=" + n);
                 HttpURLConnection http = (HttpURLConnection) url.openConnection();
 
@@ -33,22 +35,41 @@ public class GetThread implements Runnable {
                     JsonMessages list = gson.fromJson(strBuf, JsonMessages.class);
                     if (list != null) {
                         for (Message m : list.getList()) {
-                            System.out.println(m);
-                            n++;
+                            if (getToUser(m).equals(login) || getFromUser(m).equals(login)) {
+                                System.out.println(m);
+                                n++;
+                            } else if (!getToUser(m).equals("null")) {
+                                n++;
+                            } else {
+                                System.out.println(m);
+                                n++;
+                            }
                         }
                     }
+
                 } finally {
                     is.close();
                 }
-
-                // C -> S -> x
-                // WebSockets
 
                 Thread.sleep(500);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private String getFromUser(Message m) {
+        String text = m.toString();
+        int index = text.indexOf("From: ");
+        String fromUser = text.substring(index + 6, text.indexOf(",", index));
+        return fromUser.trim();
+    }
+
+    private String getToUser(Message m) {
+        String temp = m.toString();
+        int index = temp.indexOf("To: ");
+        String toUser = temp.substring(index + 4, temp.indexOf("]", index));
+        return toUser.trim();
     }
 
     private byte[] responseBodyToArray(InputStream is) throws IOException {
@@ -62,5 +83,8 @@ public class GetThread implements Runnable {
         } while (r != -1);
 
         return bos.toByteArray();
+    }
+    public static void setLogin(String login) {
+        GetThread.login = login;
     }
 }

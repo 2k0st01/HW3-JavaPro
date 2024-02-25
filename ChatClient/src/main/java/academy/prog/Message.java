@@ -3,8 +3,7 @@ package academy.prog;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -15,11 +14,26 @@ public class Message {
 	private String from;
 	private String to;
 	private String text;
+	private String file;
 
 	public Message(String from, String text) {
 		this.from = from;
 		this.text = text;
 	}
+
+	public Message(String from, String to,String text) {
+		this.from = from;
+		this.text = text;
+		this.to = to;
+	}
+
+	public Message(String from, String to,String text, String file) {
+		this.from = from;
+		this.text = text;
+		this.to = to;
+		this.file = file;
+	}
+
 
 	public String toJSON() {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -33,15 +47,16 @@ public class Message {
 	
 	@Override
 	public String toString() {
-		return new StringBuilder().append("[").append(date)
-				.append(", From: ").append(from).append(", To: ").append(to)
-				.append("] ").append(text)
+		return new StringBuilder().append("[").append(date).append(", File:").append(file)
+				.append(", From: ").append(from).append(", To: ")
+				.append(to).append("] ").append(text)
                 .toString();
 	}
 
 	public int send(String url) throws IOException {
 		URL obj = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+
 		
 		conn.setRequestMethod("POST");
 		conn.setDoOutput(true);
@@ -52,7 +67,16 @@ public class Message {
 			return conn.getResponseCode(); // 200?
 		}
 	}
-	
+
+
+	public String getFile() {
+		return file;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
+	}
+
 	public Date getDate() {
 		return date;
 	}

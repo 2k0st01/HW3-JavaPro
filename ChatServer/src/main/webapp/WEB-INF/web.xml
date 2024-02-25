@@ -12,7 +12,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>GetList</servlet-name>
 		<url-pattern>/get</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Add</servlet-name>
 		<servlet-class>academy.prog.AddServlet</servlet-class>
@@ -20,6 +20,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>Add</servlet-name>
 		<url-pattern>/add</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Users</servlet-name>
+		<servlet-class>academy.prog.UsersServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Users</servlet-name>
+		<url-pattern>/users</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>
